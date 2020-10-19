@@ -21,7 +21,6 @@ public class NoteService {
     public void postConstruct(){System.out.println("Creating NoteService bean");}
 
     public int addNote(Note note){
-        System.out.println("Adding note");
         return noteMapper.addNote(new Note(null, note.getNoteTitle(), note.getNoteDescription(), note.getUserId()));
     }
 
@@ -34,6 +33,7 @@ public class NoteService {
     }
 
     public void deleteNote(int noteId) {
+        System.out.println("Note Service Deleting Note");
         noteMapper.deleteNote(noteId);
     }
 }

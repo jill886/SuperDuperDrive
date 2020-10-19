@@ -1,6 +1,5 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.mapper.FileMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -9,10 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
@@ -29,7 +28,7 @@ public class FileController {
     }
 
     @PostMapping("/add")
-    public String addFile(Authentication authentication, @RequestParam("fileUpload") MultipartFile multipartFile, Model model) {
+    public String addFile(Authentication authentication, @RequestParam("fileUpload") MultipartFile multipartFile, RedirectAttributes redirectAttributes) {
         System.out.println("Starting addFile()");
         String errorMessage = null;
         File file = null;
@@ -44,7 +43,7 @@ public class FileController {
 
         if (!fileService.checkForDuplicates(userId, fileName).isEmpty()) {
             System.out.println("Duplicate exists");
-            errorMessage = "File name already exists.";
+            errorMessage = "File name already exists. Please choose another file to upload.";
         }
 
         if (errorMessage == null) {
@@ -58,13 +57,14 @@ public class FileController {
                 file.setFileData(multipartFile.getBytes());
                 fileService.uploadFile(file);
                 System.out.println("file uploaded");
-                return "redirect:/result?success";
+                redirectAttributes.addFlashAttribute("successMessage", "Your file was successfully uploaded.");
+                return "redirect:/home/result";
             } catch (IOException e) {
                 errorMessage = "Error uploading file.";
             }
         }
-        model.addAttribute("errorMessage", errorMessage);
-        return "result";
+        redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
+        return "redirect:/home/result";
     }
 
     @GetMapping("/view/{fileId}")
@@ -78,9 +78,10 @@ public class FileController {
     }
 
     @GetMapping("/delete/{fileId}")
-    public String deleteFile(@PathVariable(name = "fileId") Integer fileId){
+    public String deleteFile(@PathVariable(name = "fileId") Integer fileId, RedirectAttributes redirectAttributes){
         fileService.deleteFile(fileId);
-        return "redirect:/result?success";
+        redirectAttributes.addFlashAttribute("successMessage", "Your file was successfully deleted.");
+        return "redirect:/home/result";
     }
 
 }

@@ -33,6 +33,7 @@ public class UserService {
 //    public User getUser(String username){
 //        return userMapper.getUserByUsername(username);
 //    }
-    public int getUserId(String username){return userMapper.getUserByUsername(username).getUserId();}
+    public int getUserId(String username){
+        return userMapper.getUserByUsername(username).getUserId();}
 
 }

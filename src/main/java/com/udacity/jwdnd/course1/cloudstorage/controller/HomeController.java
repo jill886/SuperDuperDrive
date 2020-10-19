@@ -38,17 +38,16 @@ public class HomeController {
         int userId = userService.getUserId(username);
         List<File> files = fileService.getAllFilesForUser(userId);
         List<Note> notes = noteService.getAllNotesForUser(userId);
-//        List<Credential> credentials = credentialService.getCredentials(userId);
+        List<Credential> credentials = credentialService.getAllCredentialsForUser(userId);
         model.addAttribute("notes",notes);
         model.addAttribute("files",files);
-//        model.addAttribute("credentials",credentials);
+        model.addAttribute("credentials",credentials);
         return "home";}
 
     @GetMapping("/result")
-    public String result() {
-        System.out.println("Line 47 in HomeController: result");
+    public String getResult() {
+        System.out.println("GetResult");
         return "result";
     }
-
-    }
+}
 

@@ -36,53 +36,45 @@ public class NoteController {
 
         System.out.println("createOrUpdateNote");
         String username = authentication.getName();
-        System.out.println("username:"+ username);
         int userId = userService.getUserId(username);
-        System.out.println("userId:" + userId);
         note.setUserId(userId);
-        System.out.println("note.userId:" + note.getUserId());
-
 
         if (note.getNoteId() != null) {
-            System.out.println("noteId exists");
             try{
                 noteService.updateNote(note);
-                redirectAttributes.addFlashAttribute("successMessage", "Your note was updated successful.");
-                return "result";
+                redirectAttributes.addFlashAttribute("successMessage", "Your note was successfully updated.");
+                return "redirect:/home/result";
             }catch (Exception e){
                 System.out.println("Cause: " + e.getCause() + ". Message: " + e.getMessage());
                 redirectAttributes.addFlashAttribute("errorMessage", "Something went wrong with the note update. Please try again!");
-                return "result";
+                return "redirect:/home/result";
             }
         }
         else{
             try{
-                System.out.println("noteId does not exist");
                 noteService.addNote(note);
-                System.out.println("Line 62 in NoteController");
-                redirectAttributes.addFlashAttribute("successMessage", "Your note was created successful.");
-                System.out.println("Line 64 in NoteController");
-                return "result";
+                redirectAttributes.addFlashAttribute("successMessage", "Your note was successfully saved.");
+                return "redirect:/home/result";
             }catch (Exception e){
-                System.out.println("Line 67 in NoteController");
                 System.out.println("Cause: " + e.getCause() + ". Message: " + e.getMessage());
                 redirectAttributes.addFlashAttribute("errorMessage", "Something went wrong with the note creation. Please try again!");
-                return "result";
+                return "redirect:/home/result";
             }
 
         }
     }
 
     @GetMapping("/delete/{noteId}")
-    public String deleteNote(@PathVariable int noteId, RedirectAttributes redirectAttributes) {
+    public String deleteNote(@PathVariable(name = "noteId") int noteId, RedirectAttributes redirectAttributes) {
+        System.out.println("Deleting Note");
         try{
             noteService.deleteNote(noteId);
-            redirectAttributes.addFlashAttribute("successMessage", "Your note was deleted successful.");
-            return "redirect:/result";
+            redirectAttributes.addFlashAttribute("successMessage", "Your note was successfully deleted.");
+            return "redirect:/home/result";
         }catch (Exception e){
             System.out.println("Cause: " + e.getCause() + ". Message: " + e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "Something went wrong deleting the note. Please try again!");
-            return "redirect:/result";
+            return "redirect:/home/result";
         }
 
     }
